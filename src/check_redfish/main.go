@@ -24,6 +24,7 @@ func main() {
 	var check_thermal = flag.Bool("check-thermal", false, "Check thermal status")
 	var check_fans = flag.Bool("check-fans", false, "Check system fans")
 	var check_psu = flag.String("check-psu", "", "Check PSU")
+	var check_voltages = flag.Bool("check-voltages", false, "Check voltages")
 	var check_general = flag.Bool("check-general-health", true, "Check general health")
 	var timeout = flag.Uint("timeout", 60, "Connection timeout in seconds")
 	var help = flag.Bool("help", false, "Show help")
@@ -112,6 +113,8 @@ func main() {
 		status, _ = CheckThermal(rf, *chassis_id)
 	} else if *check_fans {
 		status, _ = CheckFans(rf, *chassis_id)
+	} else if *check_voltages {
+		status, _ = CheckVoltages(rf, *chassis_id)
 	} else if *check_psu != "" {
 		splitted := strings.Split(*check_psu, ",")
 		if len(splitted) != 2 {

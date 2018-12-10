@@ -39,6 +39,8 @@ Usage: check_redfish -host=<host> -user=<user> -password=<pass>|-password-file=<
         Check system fans
     -check-psu=<warn>,<crit>
         Check installed PSU, report <warn>/<crit> if <warn>/<crit> or less working PSUs are reported
+    -check-voltages
+        Check system voltage readings
     -check-general-health
         Check general health. This is the default when no check has been requested
 `
