@@ -104,11 +104,11 @@ func CheckThermal(rf redfish.Redfish, cha_id string) (NagiosState, error) {
 		*/
 		if tmp_state == "enabled" {
 			if tmp_health == "critical" {
-				state.Critical = append(state.Critical, fmt.Sprintf("Sensor %s is reported as critical", tmp_name))
+				state.Critical = append(state.Critical, fmt.Sprintf("Sensor \"%s\" is reported as critical", tmp_name))
 			} else if tmp_health == "warning" {
-				state.Warning = append(state.Warning, fmt.Sprintf("Sensor %s is reported as warning", tmp_name))
+				state.Warning = append(state.Warning, fmt.Sprintf("Sensor \"%s\" is reported as warning", tmp_name))
 			} else if tmp_health == "ok" {
-				state.Ok = append(state.Ok, fmt.Sprintf("Sensor %s is reported as ok", tmp_name))
+				state.Ok = append(state.Ok, fmt.Sprintf("Sensor \"%s\" is reported as ok", tmp_name))
 			}
 		}
 	}
