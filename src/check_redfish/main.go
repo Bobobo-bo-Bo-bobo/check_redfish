@@ -104,8 +104,8 @@ func main() {
 		}
 	}
 
-	// FIXME: Print final status string from NagiosState struct
-	fmt.Printf("> %+v\n", status)
+	rc, msg := ProcessStatus(status)
+	fmt.Println(msg)
 
-	os.Exit(NAGIOS_UNKNOWN)
+	os.Exit(rc)
 }
