@@ -157,13 +157,13 @@ func CheckPsu(rf redfish.Redfish, cha_id string, warn int, crit int) (NagiosStat
 		return state, errors.New(fmt.Sprintf("No power supplies reported at all. This may be a firmware bug!"))
 	}
 
-	if working_psu_count <= crit {
+	if working_psu_count < crit {
 		// prepend number of working PSUs to message slice
 		_state := state.Critical
 		state.Critical = make([]string, 1)
 		state.Critical[0] = fmt.Sprintf("Only %d out of %d power supplies are working", working_psu_count, psu_count)
 		state.Critical = append(state.Critical, _state...)
-	} else if working_psu_count <= warn {
+	} else if working_psu_count < warn {
 		// prepend number of working PSUs to message slice
 		_state := state.Warning
 		state.Warning = make([]string, 1)
