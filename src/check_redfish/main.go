@@ -76,13 +76,13 @@ func main() {
 	// setup session
 	err := rf.Initialise()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "ERROR: Initialisation failed for %s: %s\n", rf.Hostname, err.Error())
+		fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Initialisation failed for %s: %s\n", rf.Hostname, err.Error()))
 		os.Exit(NAGIOS_UNKNOWN)
 	}
 
 	err = rf.Login()
 	if err != nil {
-		fmt.Fprint(os.Stderr, "ERROR: Login on %s failed for user %s: %s\n", rf.Hostname, rf.Username, err.Error())
+		fmt.Fprint(os.Stderr, fmt.Sprintf("ERROR: Login on %s failed for user %s: %s\n", rf.Hostname, rf.Username, err.Error()))
 		os.Exit(NAGIOS_UNKNOWN)
 	}
 
