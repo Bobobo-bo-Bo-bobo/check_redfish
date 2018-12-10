@@ -5,6 +5,7 @@ import (
 	"fmt"
 	redfish "git.ypbind.de/repository/go-redfish.git"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -24,7 +25,6 @@ func main() {
 	var check_general = flag.Bool("check-general-health", true, "Check general health")
 	var timeout = flag.Uint("timeout", 60, "Connection timeout in seconds")
 	var help = flag.Bool("help", false, "Show help")
-
 	var status NagiosState
 
 	flag.Usage = ShowUsage
@@ -89,7 +89,13 @@ func main() {
 	defer rf.Logout()
 
 	if *check_installed_memory != "" {
-		//
+		m, err := strconv.Atoi(*check_installed_memory)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s", *check_installed_memory, err.Error()))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+
+		status, err = CheckInstalledMemory(rf, *system_id, m)
 	} else if *check_installed_cpus != "" {
 		//
 	} else if *check_thermal {
