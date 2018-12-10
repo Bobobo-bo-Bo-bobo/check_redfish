@@ -98,15 +98,20 @@ func main() {
 			os.Exit(NAGIOS_UNKNOWN)
 		}
 
-		status, err = CheckInstalledMemory(rf, *system_id, m)
+		status, _ = CheckInstalledMemory(rf, *system_id, m)
 	} else if *check_installed_cpus != "" {
-		//
+		c, err := strconv.Atoi(*check_installed_cpus)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s", *check_installed_memory, err.Error()))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+		status, _ = CheckInstalledCpus(rf, *system_id, c)
 	} else if *check_thermal {
 		//
 	} else if *check_psu != "" {
 		//
 	} else if *check_general {
-		status, err = CheckGeneralHealth(rf, *system_id)
+		status, _ = CheckGeneralHealth(rf, *system_id)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "ERROR: %s\n", err.Error())
 			os.Exit(NAGIOS_UNKNOWN)
