@@ -133,11 +133,11 @@ func CheckFans(rf redfish.Redfish, cha_id string) (NagiosState, error) {
 
 				// we report _upper_ ranges but _lower_ ranges also exist
 				if tmp.UpperThresholdNonCritical != nil && *tmp.UpperThresholdNonCritical > 0 {
-					_min = strconv.FormatInt(int64(*tmp.UpperThresholdNonCritical), 10)
+					_wrn = strconv.FormatInt(int64(*tmp.UpperThresholdNonCritical), 10)
 				}
 
 				if tmp.UpperThresholdCritical != nil && *tmp.UpperThresholdCritical > 0 {
-					_max = strconv.FormatInt(int64(*tmp.UpperThresholdCritical), 10)
+					_crt = strconv.FormatInt(int64(*tmp.UpperThresholdCritical), 10)
 				}
 
 				label := fmt.Sprintf("RPM_%s", tmp_name)
