@@ -35,6 +35,8 @@ Usage: check_redfish -host=<host> -user=<user> -password=<pass>|-password-file=<
         Check number of installed cpus
     -check-thermal
         Check thermal subsystem
+    -check-fans
+        Check system fans
     -check-psu=<warn>,<crit>
         Check installed PSU, report <warn>/<crit> if <warn>/<crit> or less working PSUs are reported
     -check-general-health
