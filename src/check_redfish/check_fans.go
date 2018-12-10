@@ -70,6 +70,9 @@ func CheckFans(rf redfish.Redfish, cha_id string) (NagiosState, error) {
 		tmp_name := "<unnamed fan>"
 		if tmp.Name != nil {
 			tmp_name = *tmp.Name
+		} else if tmp.FanName != nil {
+			// HP/HP(E) uses FanName instead of Name
+			tmp_name = *tmp.FanName
 		}
 
 		if tmp.Status.State == nil || *tmp.Status.State == "" {
