@@ -6,6 +6,7 @@ import (
 	redfish "git.ypbind.de/repository/go-redfish.git"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -16,7 +17,7 @@ func main() {
 	var host = flag.String("host", "", "Hostname or IP address of management board")
 	var port = flag.Int("port", 0, "Port to connect to")
 	var insecure_ssl = flag.Bool("insecure-ssl", false, "Don't verifiy SSL certificate")
-	//	var chassis_id = flag.String("chassis-id", "", "Process data of specific chassis")
+	var chassis_id = flag.String("chassis-id", "", "Process data of specific chassis")
 	var system_id = flag.String("system-id", "", "Process data of specific system")
 	var check_installed_memory = flag.String("check-installed-memory", "", "Check installed memory")
 	var check_installed_cpus = flag.String("check-installed-cpus", "", "Check installed CPUs")
@@ -94,7 +95,7 @@ func main() {
 	if *check_installed_memory != "" {
 		m, err := strconv.Atoi(*check_installed_memory)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s", *check_installed_memory, err.Error()))
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s\n", *check_installed_memory, err.Error()))
 			os.Exit(NAGIOS_UNKNOWN)
 		}
 
@@ -102,14 +103,41 @@ func main() {
 	} else if *check_installed_cpus != "" {
 		c, err := strconv.Atoi(*check_installed_cpus)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s", *check_installed_memory, err.Error()))
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s\n", *check_installed_memory, err.Error()))
 			os.Exit(NAGIOS_UNKNOWN)
 		}
 		status, _ = CheckInstalledCpus(rf, *system_id, c)
 	} else if *check_thermal {
 		//
 	} else if *check_psu != "" {
-		//
+		splitted := strings.Split(*check_psu, ",")
+		if len(splitted) != 2 {
+			fmt.Fprintf(os.Stderr, "ERROR: Invalid format for -check-psu\n")
+			ShowUsage()
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+
+		w, err := strconv.Atoi(splitted[0])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s\n", splitted[0], err.Error()))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+		c, err := strconv.Atoi(splitted[1])
+		if err != nil {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Can't convert %s to a number: %s\n", splitted[1], err.Error()))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+		if w <= 0 || c <= 0 {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Warning and critical threshold must be greater than null"))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+
+		if c > w {
+			fmt.Fprintf(os.Stderr, fmt.Sprintf("ERROR: Critical threshold must be greater or equal than warning threshold\n"))
+			os.Exit(NAGIOS_UNKNOWN)
+		}
+
+		status, _ = CheckPsu(rf, *chassis_id, w, c)
 	} else if *check_general {
 		status, _ = CheckGeneralHealth(rf, *system_id)
 		if err != nil {
