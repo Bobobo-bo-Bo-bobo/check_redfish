@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	redfish "git.ypbind.de/repository/go-redfish.git"
+	"strconv"
 	"strings"
 )
 
@@ -15,6 +16,7 @@ func CheckPsu(rf redfish.Redfish, cha_id string, warn int, crit int) (NagiosStat
 		Warning:  make([]string, 0),
 		Ok:       make([]string, 0),
 		Unknown:  make([]string, 0),
+		PerfData: make([]string, 0),
 	}
 	var psu_count int
 	var working_psu_count int
@@ -143,6 +145,31 @@ func CheckPsu(rf redfish.Redfish, cha_id string, warn int, crit int) (NagiosStat
 		} else {
 			state.Unknown = append(state.Unknown, fmt.Sprintf("PSU %s (SN: %s) reports unknown state %s", psu_name, psu_sn, *psu.Status.State))
 			continue
+		}
+
+		// add power performance data
+		if psu.LastPowerOutputWatts != nil && *psu.LastPowerOutputWatts > 0 {
+			_cur := strconv.FormatInt(int64(*psu.LastPowerOutputWatts), 10)
+
+			// get limits
+			_max := ""
+			if psu.PowerCapacityWatts != nil && *psu.PowerCapacityWatts > 0 {
+				_max = strconv.FormatInt(int64(*psu.PowerCapacityWatts), 10)
+			}
+			label := fmt.Sprintf("power_output_%s", psu_name)
+			perfdata, err := MakePerfDataString(label, _cur, nil, nil, nil, nil, &_max)
+			if err == nil {
+				state.PerfData = append(state.PerfData, perfdata)
+			}
+		}
+
+		if psu.LineInputVoltage != nil && *psu.LineInputVoltage > 0 {
+			_cur := strconv.FormatInt(int64(*psu.LineInputVoltage), 10)
+			label := fmt.Sprintf("input_voltage_%s", psu_name)
+			perfdata, err := MakePerfDataString(label, _cur, nil, nil, nil, nil, nil)
+			if err == nil {
+				state.PerfData = append(state.PerfData, perfdata)
+			}
 		}
 	}
 

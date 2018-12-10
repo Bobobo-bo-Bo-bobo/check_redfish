@@ -13,4 +13,5 @@ type NagiosState struct {
 	Warning  []string
 	Ok       []string
 	Unknown  []string
+	PerfData []string
 }

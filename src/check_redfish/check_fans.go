@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	redfish "git.ypbind.de/repository/go-redfish.git"
+	"strconv"
 	"strings"
 )
 
@@ -15,6 +16,7 @@ func CheckFans(rf redfish.Redfish, cha_id string) (NagiosState, error) {
 		Warning:  make([]string, 0),
 		Ok:       make([]string, 0),
 		Unknown:  make([]string, 0),
+		PerfData: make([]string, 0),
 	}
 
 	// no system specified, pick the first reported system
@@ -113,7 +115,39 @@ func CheckFans(rf redfish.Redfish, cha_id string) (NagiosState, error) {
 			} else if tmp_health == "ok" {
 				state.Ok = append(state.Ok, fmt.Sprintf("Fan \"%s\" is reported as ok", tmp_name))
 			}
+
+			if tmp.Reading != nil && *tmp.Reading > 0 {
+				_cur := strconv.FormatInt(int64(*tmp.Reading), 10)
+				_min := ""
+				_max := ""
+				_wrn := ""
+				_crt := ""
+
+				if tmp.MinReadingRange != nil && *tmp.MinReadingRange > 0 {
+					_min = strconv.FormatInt(int64(*tmp.MinReadingRange), 10)
+				}
+
+				if tmp.MaxReadingRange != nil && *tmp.MaxReadingRange > 0 {
+					_max = strconv.FormatInt(int64(*tmp.MaxReadingRange), 10)
+				}
+
+				// we report _upper_ ranges but _lower_ ranges also exist
+				if tmp.UpperThresholdNonCritical != nil && *tmp.UpperThresholdNonCritical > 0 {
+					_min = strconv.FormatInt(int64(*tmp.UpperThresholdNonCritical), 10)
+				}
+
+				if tmp.UpperThresholdCritical != nil && *tmp.UpperThresholdCritical > 0 {
+					_max = strconv.FormatInt(int64(*tmp.UpperThresholdCritical), 10)
+				}
+
+				label := fmt.Sprintf("RPM_%s", tmp_name)
+				perfdata, err := MakePerfDataString(label, _cur, nil, &_wrn, &_crt, &_min, &_max)
+				if err == nil {
+					state.PerfData = append(state.PerfData, perfdata)
+				}
+			}
 		}
+
 	}
 
 	return state, nil
