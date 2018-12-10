@@ -108,7 +108,7 @@ func main() {
 		}
 		status, _ = CheckInstalledCpus(rf, *system_id, c)
 	} else if *check_thermal {
-		//
+		status, _ = CheckThermal(rf, *chassis_id)
 	} else if *check_psu != "" {
 		splitted := strings.Split(*check_psu, ",")
 		if len(splitted) != 2 {
