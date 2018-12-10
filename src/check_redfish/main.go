@@ -15,7 +15,7 @@ func main() {
 	var host = flag.String("host", "", "Hostname or IP address of management board")
 	var port = flag.Int("port", 0, "Port to connect to")
 	var insecure_ssl = flag.Bool("insecure-ssl", false, "Don't verifiy SSL certificate")
-	var chassis_id = flag.String("chassis-id", "", "Process data of specific chassis")
+	//	var chassis_id = flag.String("chassis-id", "", "Process data of specific chassis")
 	var system_id = flag.String("system-id", "", "Process data of specific system")
 	var check_installed_memory = flag.String("check-installed-memory", "", "Check installed memory")
 	var check_installed_cpus = flag.String("check-installed-cpus", "", "Check installed CPUs")
