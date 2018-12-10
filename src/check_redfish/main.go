@@ -37,16 +37,19 @@ func main() {
 
 	if *host == "" {
 		fmt.Fprintf(os.Stderr, "ERROR: No hostname specified\n")
+		ShowUsage()
 		os.Exit(NAGIOS_UNKNOWN)
 	}
 
 	if *user == "" {
 		fmt.Fprintf(os.Stderr, "ERROR: No username specified\n")
+		ShowUsage()
 		os.Exit(NAGIOS_UNKNOWN)
 	}
 
 	if *password == "" && *password_file == "" {
 		fmt.Fprintf(os.Stderr, "ERROR: No password or password file specified\n")
+		ShowUsage()
 		os.Exit(NAGIOS_UNKNOWN)
 	}
 
