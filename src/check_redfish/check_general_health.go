@@ -68,15 +68,15 @@ func CheckGeneralHealth(rf redfish.Redfish, sys_id string) (NagiosState, error) 
 			state.Ok = append(state.Ok, "General health is reported as OK")
 		} else if l_health == "warning" {
 			state.Warning = append(state.Warning, "General health is reported as warning")
-		} else if l_health == "Critical" {
+		} else if l_health == "critical" {
 			state.Critical = append(state.Critical, "General health is reported as critical")
-		} else if l_health == "Failed" {
+		} else if l_health == "failed" {
 			// XXX: Although https://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Status only defines Ok, Warning and Critical some boards report
 			//      Failed as well
 			state.Critical = append(state.Critical, "General health is reported as failed")
 		} else {
 			// XXX: there may be more non-standard health strings
-			state.Unknown = append(state.Unknown, "General health is reported as \"%s\"", *system_data.Status.Health)
+			state.Unknown = append(state.Unknown, fmt.Sprintf("General health is reported as \"%s\"", *system_data.Status.Health))
 		}
 	} else {
 		state.Unknown = append(state.Unknown, fmt.Sprintf("System reports \"%s\" instead of \"Enabled\" for health information", *system_data.Status.State))
