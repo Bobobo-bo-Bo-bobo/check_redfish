@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const help string = `redfish-tool version 1.0.0
+const help string = `redfish-tool version 1.0.1
 Copyright (C) 2018 - 2019 by Andreas Maus <maus@ypbind.de>
 This program comes with ABSOLUTELY NO WARRANTY.
 
